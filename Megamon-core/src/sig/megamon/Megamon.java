@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -30,6 +31,11 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
+import sig.megamon.creature.CreatureMove;
+import sig.megamon.creature.CreatureType;
+import sig.megamon.creature.ExperienceRate;
+import sig.megamon.menu.DialogBox;
+import sig.megamon.menu.StartMenuBox;
 import sig.megamon.ref.Ref;
 import sig.megamon.ref.RoomRef;
 import sig.megamon.ref.SignRef;
@@ -42,17 +48,16 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 	Texture img;
 	public static BitmapFont font;
 	public static DialogBox messagebox;
+	public static StartMenuBox startmenubox;
 	//AssetManager assets;
 	//TiledMap map;
-	OrthographicCamera camera;
+	static OrthographicCamera camera;
 	final public static int TILESIZE=16;
 	final public static int WINDOW_WIDTH=640;
 	final public static int WINDOW_HEIGHT=480;
 	final public static double CHAR_SPD=0.1;
-	Point2D.Double direction = new Point2D.Double(0,0);
-	Point2D.Double lastdirection = new Point2D.Double(0,1);
-	final public static Point2D.Double position=new Point2D.Double(1,1);
 	Calendar lastCheck = Calendar.getInstance();
+	public static Player mainP;
 	int framesPassed=0;
 	final public static String HIDDENLAYERNAME = "Tile Layer 2";
 	final public static int ACTIONKEY = Keys.Z;
@@ -61,6 +66,7 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 	final public static int MOVERIGHTKEY = Keys.RIGHT;
 	final public static int MOVEUPKEY = Keys.UP;
 	final public static int MOVEDOWNKEY = Keys.DOWN;
+	final public static int MENUKEY = Keys.ENTER;
 	//public static List<Object> objects = new ArrayList<Object>();
 	public static Room currentLevel;
 	public static HashMap<String,RoomRef> doorDatabase = new HashMap<String,RoomRef>();
@@ -69,9 +75,8 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
-		img = new Texture("megamon_icon64.png");
 		font = new BitmapFont(Gdx.files.internal("fonts/AgencyFB.fnt"));
-		 
+		mainP = new Player(new Point2D.Double(1,1),"megamon_icon64.png");
 		//assets = new AssetManager();
 		
 		/*assets.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
@@ -86,8 +91,16 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		objects.add(new Object("megamonlogowip.png",new Point2D.Double(3, 7)));*/
 		Database.SetupDoorDatabase();
 		Database.SetupInfoDatabase();
-		currentLevel = new Room(position,"Test Map");
+		currentLevel = new Room(mainP.position,"Test Map");
+		
+		/*MegamonPet testPet = new MegamonPet("Test",
+				new MegamonCreature("test_mini_sprite.png","test_sprite.png","test_sprite.png",
+						"Test Creature", "This is for testing purposes only.", 14, 60, CreatureType.NORMAL,
+						40,60,30,30,50,55,30,ExperienceRate.MEDIUM_FAST,new CreatureMove[]{}),
+				100);
+		System.out.println(testPet);*/
 		//messagebox = new DialogBox("This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.");
+		//startmenubox = new StartMenuBox(0);
 	}
 
 	@Override
@@ -102,45 +115,26 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		if (messagebox!=null) {
 			messagebox.run();
 		}
+		else 
+		if (startmenubox!=null){
+			startmenubox.run();
+		}
 		else {
 			for (Object o : currentLevel.getObjects()) {
 				o.run();
 			}
-			if (PlayerUtils.isSnappedToGrid(position)) {
-				direction=new Point2D.Double(0, 0);
-				if (Gdx.input.isKeyPressed(MOVELEFTKEY)) {
-					direction=lastdirection=new Point2D.Double(-CHAR_SPD,0);
-				} else
-				if (Gdx.input.isKeyPressed(MOVEUPKEY)) {
-					direction=lastdirection=new Point2D.Double(0,CHAR_SPD);
-				} else 
-				if (Gdx.input.isKeyPressed(MOVERIGHTKEY)) {
-					direction=lastdirection=new Point2D.Double(CHAR_SPD,0);
-				} else
-				if (Gdx.input.isKeyPressed(MOVEDOWNKEY)) {
-					direction=lastdirection=new Point2D.Double(0,-CHAR_SPD);
-				}
-				Point2D.Double destinationposition = new Point2D.Double(position.x+Math.signum(lastdirection.x),position.y+Math.signum(lastdirection.y));
-				if (Gdx.input.isKeyJustPressed(ACTIONKEY)) {
-					CheckForInfo(destinationposition);
-				}
-				if (direction.x!=0 || direction.y!=0) {
-					//System.out.println("("+position.x+","+Math.signum(direction.x)+","+position.y+","+Math.signum(direction.y)+")");
-					//Point2D.Double destinationposition = new Point2D.Double(position.x+Math.signum(direction.x),position.y+Math.signum(direction.y));
-					if (PlayerUtils.isLocationPassable(currentLevel.getMap(),destinationposition)) {
-						position.setLocation(position.x+direction.x, position.y+direction.y);
-					} else {
-						//We hit a wall.
-					}
-					System.out.println(infoDatabase.keySet());
-					CheckForDoor(destinationposition);
-				}
-			} else {
-				position.setLocation(position.x+direction.x, position.y+direction.y);
-				//System.out.println(position);
+			if (Gdx.input.isKeyJustPressed(Megamon.MENUKEY)) {
+				Megamon.startmenubox = new StartMenuBox(0);
+			}
+			if (PlayerUtils.isSnappedToGrid(mainP.position)) {
+				mainP.run();
 			}
 		}
-		camera.position.set((float)position.x+0.5f, (float)position.y+0.5f, camera.position.z);
+		if (!PlayerUtils.isSnappedToGrid(mainP.position)) {
+			mainP.position.setLocation(mainP.position.x+mainP.direction.x, mainP.position.y+mainP.direction.y);
+			//System.out.println(position);
+		}
+		camera.position.set((float)mainP.position.x+0.5f, (float)mainP.position.y+0.5f, camera.position.z);
 		//System.out.println("Camera position: "+camera.position);
 		camera.update();
 		//System.out.println(Megamon.WINDOW_WIDTH+","+Megamon.WINDOW_HEIGHT+";"+camera.viewportWidth+","+camera.viewportHeight);
@@ -154,10 +148,13 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 					(float)GraphicUtils.getRelativePixelPositionFromPlayer(camera, o.position).y);
 			o.draw();
 		}
-		batch.draw(img, (int)GraphicUtils.getPlayerPixelPosition(camera).getX(), (int)GraphicUtils.getPlayerPixelPosition(camera).getY(), (int)GraphicUtils.getTileSize(camera).getX(), (int)GraphicUtils.getTileSize(camera).getY());
+		mainP.draw(batch);
 		if (messagebox!=null) {
 			messagebox.draw(batch);
 		}
+		if (startmenubox!=null) {
+			startmenubox.draw(batch);
+		}	
 		GlyphLayout size = font.draw(batch, "Test Text", 0, 32);
 		//font.draw(batch, "Test Text", Megamon.WINDOW_WIDTH-size.width, 128-size.height);
 		batch.end();
@@ -168,32 +165,35 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 			lastCheck=Calendar.getInstance();
 		}
 	}
-
-	private void CheckForDoor(Point2D.Double destinationposition) {
-		if (doorDatabase.containsKey(PlayerUtils.getDoorPositionHash(destinationposition))) {
-			//System.out.println("This is a door!");
-			RoomRef door = doorDatabase.get(PlayerUtils.getDoorPositionHash(destinationposition));
-			if (!door.destinationRoom.equalsIgnoreCase(currentLevel.mapName)) {
-				currentLevel.destroy();
-				currentLevel = new Room(door.doorDestination,door.destinationRoom);
-			} else {
-				position.setLocation(door.doorDestination);
-			}
-		}
-	}
-
-	private void CheckForInfo(Point2D.Double destinationposition) {
-		if (infoDatabase.containsKey(PlayerUtils.getDoorPositionHash(destinationposition))) {
-			//System.out.println("This is a door!");
-			SignRef info = infoDatabase.get(PlayerUtils.getDoorPositionHash(destinationposition));
-			//TODO Do interface stuff here.
-			messagebox = new DialogBox(info.getMessages());
-		}
-	}
 	
 	@Override
 	public void dispose () {
 		batch.dispose();
 		img.dispose();
+	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder(this.getClass().getSimpleName()+"(");
+		boolean first=true;
+		for (Field f : this.getClass().getDeclaredFields()) {
+			try {
+				if (!first) {
+					sb.append(",");
+				} else {
+					first=false;
+				}
+				sb.append(f.getName()+"="+this.getClass().getDeclaredField(f.getName()).get(this));
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		sb.append(")");
+		return sb.toString();
 	}
 }

@@ -1,4 +1,4 @@
-package sig.megamon;
+package sig.megamon.menu;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
 
+import sig.megamon.Megamon;
 import sig.megamon.utils.DrawUtils;
 
 public class DialogBox {
@@ -34,7 +35,7 @@ public class DialogBox {
 	public void run() {
 		//TODO accept keyboard inputs for the dialog box.
 		if (Gdx.input.isKeyJustPressed(Megamon.ACTIONKEY)) {
-			System.out.println("Cursor is at position "+cursor+"/"+displayedMessage.length());
+			//System.out.println("Cursor is at position "+cursor+"/"+displayedMessage.length());
 			if (cursor==displayedMessage.length()) {
 				if (cursor!=messageBody.length()) {
 					displayedMessage="";
@@ -88,9 +89,9 @@ public class DialogBox {
 		String subString=messageBody.substring(cursor, messageBody.length());
 		//System.out.println("Substring is "+subString);
 		for (int i=0;i<subString.length();i++) {
-			System.out.println("Character at "+i+" is "+subString.charAt(i));
+			//System.out.println("Character at "+i+" is "+subString.charAt(i));
 			if (subString.charAt(i)==' ') {
-				System.out.println("Found a space at position "+i);
+				//System.out.println("Found a space at position "+i);
 				return i;
 			}
 		}

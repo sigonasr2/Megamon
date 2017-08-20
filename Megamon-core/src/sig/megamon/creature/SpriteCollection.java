@@ -1,5 +1,7 @@
 package sig.megamon.creature;
 
+import java.lang.reflect.Field;
+
 import com.badlogic.gdx.graphics.Texture;
 
 /**
@@ -31,5 +33,30 @@ public class SpriteCollection {
 	}
 	public Texture getBackSprite() {
 		return back_sprite;
+	}
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder(this.getClass().getSimpleName()+"(");
+		boolean first=true;
+		for (Field f : this.getClass().getDeclaredFields()) {
+			try {
+				if (!first) {
+					sb.append(",");
+				} else {
+					first=false;
+				}
+				sb.append(f.getName()+"="+this.getClass().getDeclaredField(f.getName()).get(this));
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (NoSuchFieldException e) {
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				e.printStackTrace();
+			}
+		}
+		sb.append(")");
+		return sb.toString();
 	}
 }

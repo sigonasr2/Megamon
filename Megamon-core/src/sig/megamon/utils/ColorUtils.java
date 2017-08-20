@@ -12,11 +12,11 @@ public class ColorUtils {
 		String r = hex.substring(1, 3);
 		String g = hex.substring(3, 5);
 		String b = hex.substring(5, 7);
-		System.out.println("Colors: "+r+","+g+","+b);
+		//System.out.println("Colors: "+r+","+g+","+b);
 		float r_col = ConvertHexStringToDecimal(r);
 		float g_col = ConvertHexStringToDecimal(g);
 		float b_col = ConvertHexStringToDecimal(b);
-		System.out.println("Colors: "+r_col+","+g_col+","+b_col);
+		//System.out.println("Colors: "+r_col+","+g_col+","+b_col);
 		return new Color(r_col/255,g_col/255,b_col/255,1);
 	}
 

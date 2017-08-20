@@ -28,7 +28,7 @@ public class Room {
 	 */
 	public Room(Point2D.Double startingLoc, String mapFileRef) {
 		this.startingLocation=startingLoc;
-		Megamon.position.setLocation(startingLoc);
+		Megamon.mainP.position.setLocation(startingLoc);
 		this.map = new TmxMapLoader().load(MAPFOLDER+mapFileRef+".tmx");
 		this.map.getLayers().get(Megamon.HIDDENLAYERNAME).setVisible(false);
 		renderer = new OrthogonalTiledMapRenderer(this.map,1/(float)Megamon.TILESIZE);

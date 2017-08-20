@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 
 import sig.megamon.Megamon;
+import sig.megamon.Player;
 
 public class GraphicUtils {
 	public static double getAspectRatio() {
@@ -24,7 +25,7 @@ public class GraphicUtils {
 	}
 	public static Point2D.Double getRelativePixelPositionFromPlayer(Camera camera,Point2D.Double position) {
 		Point2D.Double pixelpos = getTileToPixel(camera,position);
-		Point2D.Double playerpos = getTileToPixel(camera,Megamon.position);
+		Point2D.Double playerpos = getTileToPixel(camera,Megamon.mainP.position);
 		Point2D.Double playerpixelpos = getPlayerPixelPosition(camera);
 		return new Point2D.Double(playerpixelpos.x+(pixelpos.x-playerpos.x), playerpixelpos.y+(pixelpos.y-playerpos.y));
 	}

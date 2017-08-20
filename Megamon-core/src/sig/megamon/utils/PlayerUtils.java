@@ -33,7 +33,7 @@ public class PlayerUtils {
 	public static String getDoorPositionHash(Point2D.Double position) {
 		//position = getRoundedPosition(position);
 		String hash = Megamon.currentLevel.getMapName()+"_"+(int)Math.round(position.getX())+","+(int)Math.round(position.getY());
-		System.out.println("Getting hash "+hash);
+		//System.out.println("Getting hash "+hash);
 		return hash;
 	}
 	

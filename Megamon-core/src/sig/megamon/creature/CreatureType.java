@@ -1,5 +1,7 @@
 package sig.megamon.creature;
 
+import java.lang.reflect.Field;
+
 public enum CreatureType {
 	NORMAL,
 	FIRE,
