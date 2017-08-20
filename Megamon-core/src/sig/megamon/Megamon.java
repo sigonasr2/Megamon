@@ -17,6 +17,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.Files.FileType;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -40,7 +41,7 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 	SpriteBatch batch;
 	Texture img;
 	public static BitmapFont font;
-	DialogBox messagebox;
+	public static DialogBox messagebox;
 	//AssetManager assets;
 	//TiledMap map;
 	OrthographicCamera camera;
@@ -49,21 +50,28 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 	final public static int WINDOW_HEIGHT=480;
 	final public static double CHAR_SPD=0.1;
 	Point2D.Double direction = new Point2D.Double(0,0);
+	Point2D.Double lastdirection = new Point2D.Double(0,1);
 	final public static Point2D.Double position=new Point2D.Double(1,1);
 	Calendar lastCheck = Calendar.getInstance();
 	int framesPassed=0;
 	final public static String HIDDENLAYERNAME = "Tile Layer 2";
+	final public static int ACTIONKEY = Keys.Z;
+	final public static int CANCELKEY = Keys.X;
+	final public static int MOVELEFTKEY = Keys.LEFT;
+	final public static int MOVERIGHTKEY = Keys.RIGHT;
+	final public static int MOVEUPKEY = Keys.UP;
+	final public static int MOVEDOWNKEY = Keys.DOWN;
 	//public static List<Object> objects = new ArrayList<Object>();
 	public static Room currentLevel;
 	public static HashMap<String,RoomRef> doorDatabase = new HashMap<String,RoomRef>();
 	public static HashMap<String,SignRef> infoDatabase = new HashMap<String,SignRef>();
 	
 	@Override
-	public void create () {
+	public void create() {
 		batch = new SpriteBatch();
 		img = new Texture("megamon_icon64.png");
 		font = new BitmapFont(Gdx.files.internal("fonts/AgencyFB.fnt"));
-		
+		 
 		//assets = new AssetManager();
 		
 		/*assets.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
@@ -79,7 +87,7 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		Database.SetupDoorDatabase();
 		Database.SetupInfoDatabase();
 		currentLevel = new Room(position,"Test Map");
-		messagebox = new DialogBox("This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.");
+		//messagebox = new DialogBox("This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.");
 	}
 
 	@Override
@@ -100,21 +108,25 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 			}
 			if (PlayerUtils.isSnappedToGrid(position)) {
 				direction=new Point2D.Double(0, 0);
-				if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-					direction=new Point2D.Double(-CHAR_SPD,0);
+				if (Gdx.input.isKeyPressed(MOVELEFTKEY)) {
+					direction=lastdirection=new Point2D.Double(-CHAR_SPD,0);
 				} else
-				if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-					direction=new Point2D.Double(0,CHAR_SPD);
+				if (Gdx.input.isKeyPressed(MOVEUPKEY)) {
+					direction=lastdirection=new Point2D.Double(0,CHAR_SPD);
 				} else 
-				if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-					direction=new Point2D.Double(CHAR_SPD,0);
+				if (Gdx.input.isKeyPressed(MOVERIGHTKEY)) {
+					direction=lastdirection=new Point2D.Double(CHAR_SPD,0);
 				} else
-				if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-					direction=new Point2D.Double(0,-CHAR_SPD);
+				if (Gdx.input.isKeyPressed(MOVEDOWNKEY)) {
+					direction=lastdirection=new Point2D.Double(0,-CHAR_SPD);
+				}
+				Point2D.Double destinationposition = new Point2D.Double(position.x+Math.signum(lastdirection.x),position.y+Math.signum(lastdirection.y));
+				if (Gdx.input.isKeyJustPressed(ACTIONKEY)) {
+					CheckForInfo(destinationposition);
 				}
 				if (direction.x!=0 || direction.y!=0) {
 					//System.out.println("("+position.x+","+Math.signum(direction.x)+","+position.y+","+Math.signum(direction.y)+")");
-					Point2D.Double destinationposition = new Point2D.Double(position.x+Math.signum(direction.x),position.y+Math.signum(direction.y));
+					//Point2D.Double destinationposition = new Point2D.Double(position.x+Math.signum(direction.x),position.y+Math.signum(direction.y));
 					if (PlayerUtils.isLocationPassable(currentLevel.getMap(),destinationposition)) {
 						position.setLocation(position.x+direction.x, position.y+direction.y);
 					} else {
@@ -122,7 +134,6 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 					}
 					System.out.println(infoDatabase.keySet());
 					CheckForDoor(destinationposition);
-					CheckForInfo(destinationposition);
 				}
 			} else {
 				position.setLocation(position.x+direction.x, position.y+direction.y);
@@ -132,7 +143,7 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		camera.position.set((float)position.x+0.5f, (float)position.y+0.5f, camera.position.z);
 		//System.out.println("Camera position: "+camera.position);
 		camera.update();
-		System.out.println(Megamon.WINDOW_WIDTH+","+Megamon.WINDOW_HEIGHT+";"+camera.viewportWidth+","+camera.viewportHeight);
+		//System.out.println(Megamon.WINDOW_WIDTH+","+Megamon.WINDOW_HEIGHT+";"+camera.viewportWidth+","+camera.viewportHeight);
 		currentLevel.renderer.setView(camera);
 		currentLevel.renderer.render();
 		batch.begin();
@@ -176,7 +187,7 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 			//System.out.println("This is a door!");
 			SignRef info = infoDatabase.get(PlayerUtils.getDoorPositionHash(destinationposition));
 			//TODO Do interface stuff here.
-			
+			messagebox = new DialogBox(info.getMessages());
 		}
 	}
 	

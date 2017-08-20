@@ -20,7 +20,11 @@ public class Database {
 	public static void SetupInfoDatabase() {
 		new SignRef(
 				new Point2D.Double(9,99),
-				"Test Map"
+				"Test Map",
+				new String[]{
+						"Hello there! You have found the invisible space that happens to be a dialog box.",
+						"\n\nCongratulations~!"
+				}
 				);
 	}
 }

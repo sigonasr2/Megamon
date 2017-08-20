@@ -87,9 +87,7 @@ public class Room {
 	 * Frees all resources associated with this room.
 	 */
 	public void destroy() {
-		for (Object o : objects) {
-			o.destroy();
-		}
+		objects.clear();
 		map.dispose();
 		renderer.dispose();
 	}

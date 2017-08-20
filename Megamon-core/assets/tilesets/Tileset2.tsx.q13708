@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tileset name="wiremantiles" tilewidth="16" tileheight="16" spacing="1" margin="1" tilecount="66" columns="11">
+ <image source="D:/Downloads/MegaMon/MegaMon/GRAPHICS/tilesets/wiremantiles.png" width="188" height="103"/>
+</tileset>

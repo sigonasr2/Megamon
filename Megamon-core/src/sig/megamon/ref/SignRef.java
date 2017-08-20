@@ -5,18 +5,19 @@ import java.awt.geom.Point2D.Double;
 import sig.megamon.Megamon;
 
 public class SignRef extends Ref{
-	String message;
+	String[] messages;
 
-	public SignRef(Double position, String room) {
+	public SignRef(Double position, String room, String...messages) {
 		super(position, room);
 		Megamon.infoDatabase.put(generateHash(),this);
+		this.messages=messages;
 	}
 	
 	public String getRoom() {
 		return roomName;
 	}
 	
-	public String getMessage() {
-		return message;
+	public String[] getMessages() {
+		return messages;
 	}
  }

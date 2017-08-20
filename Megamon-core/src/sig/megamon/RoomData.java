@@ -8,8 +8,8 @@ import java.util.List;
 public enum RoomData {
 	MAP_1("Test Map",
 			Arrays.asList(
-				new Object("MEGASPINNN.png",new Point2D.Double(0, 4)),
-				new Object("megamonlogowip.png",new Point2D.Double(3, 7))
+				new Object("MEGASPINNN.png",new Point2D.Double(0, 4))
+				//new Object("megamonlogowip.png",new Point2D.Double(3, 7))
 			)),
 	MAP_2("Test Map 2",
 			new ArrayList<Object>()),
