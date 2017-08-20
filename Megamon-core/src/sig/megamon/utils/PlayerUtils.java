@@ -22,6 +22,23 @@ public class PlayerUtils {
 		//TiledMapTileLayer layer2 = (TiledMapTileLayer)map.getLayers().get("Tile Layer 1");
 		int targetx = (int)Math.round(coords.x);
 		int targety = (int)Math.round(coords.y);
-		return layer.getCell(targetx,targety)==null;
+		/*if (layer.getCell(targetx, targety)!=null) {
+			System.out.println(layer.getCell(targetx,targety).getTile().getId());
+		}*/
+		return layer.getCell(targetx,targety)==null ||
+				(layer.getCell(targetx,targety).getTile().getId()!=90 &&
+				layer.getCell(targetx,targety).getTile().getId()!=91);
+	}
+	
+	public static String getDoorPositionHash(Point2D.Double position) {
+		//position = getRoundedPosition(position);
+		String hash = Megamon.currentLevel.getMapName()+"_"+(int)Math.round(position.getX())+","+(int)Math.round(position.getY());
+		System.out.println("Getting hash "+hash);
+		return hash;
+	}
+	
+	public static Point2D.Double getRoundedPosition(Point2D.Double position) {
+		position.setLocation((int)Math.round(position.x), (int)Math.round(position.y));
+		return position;
 	}
 }

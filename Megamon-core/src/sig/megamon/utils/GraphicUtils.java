@@ -11,16 +11,16 @@ import sig.megamon.Megamon;
 
 public class GraphicUtils {
 	public static double getAspectRatio() {
-		return (double)Gdx.graphics.getHeight()/Gdx.graphics.getWidth();
+		return (double)Megamon.WINDOW_HEIGHT/Megamon.WINDOW_WIDTH;
 	}
 	public static Point2D.Double getTileToPixel(Camera camera, Point2D.Double position) {
-		return new Point2D.Double((int)(Gdx.graphics.getWidth()/camera.viewportWidth*(position.getX()-0.5)),(int)(Gdx.graphics.getHeight()/camera.viewportHeight*(position.getY()/*-0.5*/)));
+		return new Point2D.Double((int)(Megamon.WINDOW_WIDTH/camera.viewportWidth*(position.getX()-0.5)),(int)(Megamon.WINDOW_HEIGHT/camera.viewportHeight*(position.getY()/*-0.5*/)));
 	}
 	public static Point2D.Double getPlayerPixelPosition(Camera camera) {
 		return getTileToPixel(camera,new Point2D.Double((int)(camera.viewportWidth/2),(int)(camera.viewportHeight/2)));
 	}
 	public static Point2D.Double getTileSize(Camera camera) {
-		return new Point2D.Double((int)(Gdx.graphics.getWidth()/camera.viewportWidth),(int)(Gdx.graphics.getHeight()/camera.viewportHeight));
+		return new Point2D.Double((int)(Megamon.WINDOW_WIDTH/camera.viewportWidth),(int)(Megamon.WINDOW_HEIGHT/camera.viewportHeight));
 	}
 	public static Point2D.Double getRelativePixelPositionFromPlayer(Camera camera,Point2D.Double position) {
 		Point2D.Double pixelpos = getTileToPixel(camera,position);

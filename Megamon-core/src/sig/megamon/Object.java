@@ -8,6 +8,7 @@ public class Object {
 	Point2D.Double position;
 	Texture sprite;
 	boolean passable=false;
+	boolean visible=true;
 	public Object(String sprite_img, Point2D.Double position) {
 		this(sprite_img,position,false);
 	}
@@ -24,5 +25,18 @@ public class Object {
 	
 	public void draw() {
 		
+	}
+	
+	public void setVisible(boolean isVisible) {
+		this.visible=isVisible;
+	}
+	
+	/**
+	 * Destroys the object, freeing all resources.
+	 */
+	public void destroy() {
+		//sprite.dispose();
+		//Megamon.objects.remove(this);
+		Megamon.currentLevel.removeObject(this);
 	}
 }
