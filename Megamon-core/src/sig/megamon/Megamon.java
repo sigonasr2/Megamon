@@ -32,9 +32,11 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 import sig.megamon.creature.CreatureMove;
+import sig.megamon.creature.CreatureMoveLinker;
 import sig.megamon.creature.CreatureType;
 import sig.megamon.creature.ExperienceRate;
 import sig.megamon.menu.DialogBox;
+import sig.megamon.menu.MegamonPartyScreen;
 import sig.megamon.menu.StartMenuBox;
 import sig.megamon.ref.Ref;
 import sig.megamon.ref.RoomRef;
@@ -49,6 +51,8 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 	public static BitmapFont font;
 	public static DialogBox messagebox;
 	public static StartMenuBox startmenubox;
+	public static MegamonPartyScreen partyscreen;
+	public static Texture healthbar;
 	//AssetManager assets;
 	//TiledMap map;
 	static OrthographicCamera camera;
@@ -67,6 +71,8 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 	final public static int MOVEUPKEY = Keys.UP;
 	final public static int MOVEDOWNKEY = Keys.DOWN;
 	final public static int MENUKEY = Keys.ENTER;
+	public static List<MegamonCreature> megamonDatabase = new ArrayList<MegamonCreature>();
+	public static HashMap<String,CreatureMove> moveDatabase = new HashMap<String,CreatureMove>();
 	//public static List<Object> objects = new ArrayList<Object>();
 	public static Room currentLevel;
 	public static HashMap<String,RoomRef> doorDatabase = new HashMap<String,RoomRef>();
@@ -77,6 +83,7 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		batch = new SpriteBatch();
 		font = new BitmapFont(Gdx.files.internal("fonts/AgencyFB.fnt"));
 		mainP = new Player(new Point2D.Double(1,1),"megamon_icon64.png");
+		healthbar = new Texture("interface/healthbar.png");
 		//assets = new AssetManager();
 		
 		/*assets.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
@@ -91,14 +98,39 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		objects.add(new Object("megamonlogowip.png",new Point2D.Double(3, 7)));*/
 		Database.SetupDoorDatabase();
 		Database.SetupInfoDatabase();
+		Database.SetupMoveDatabase();
+		Database.SetupMegamonDatabase();
 		currentLevel = new Room(mainP.position,"Test Map");
 		
-		/*MegamonPet testPet = new MegamonPet("Test",
+		MegamonPet testPet = new MegamonPet("Test Name",
 				new MegamonCreature("test_mini_sprite.png","test_sprite.png","test_sprite.png",
 						"Test Creature", "This is for testing purposes only.", 14, 60, CreatureType.NORMAL,
-						40,60,30,30,50,55,30,ExperienceRate.MEDIUM_FAST,new CreatureMove[]{}),
+						40,60,30,30,50,55,30,ExperienceRate.MEDIUM_FAST,new CreatureMoveLinker[]{}),
 				100);
-		System.out.println(testPet);*/
+		MegamonPet testPet2 = new MegamonPet("Test Name",
+				new MegamonCreature("test_mini_sprite.png","test_sprite.png","test_sprite.png",
+						"Test Creature", "This is for testing purposes only.", 14, 60, CreatureType.NORMAL,
+						40,60,30,30,50,55,30,ExperienceRate.MEDIUM_FAST,new CreatureMoveLinker[]{}),
+				100);
+		MegamonPet testPet3 = new MegamonPet("Test Name",
+				new MegamonCreature("test_mini_sprite.png","test_sprite.png","test_sprite.png",
+						"Test Creature", "This is for testing purposes only.", 14, 60, CreatureType.NORMAL,
+						40,60,30,30,50,55,30,ExperienceRate.MEDIUM_FAST,new CreatureMoveLinker[]{}),
+				100);
+		MegamonPet testPet4 = new MegamonPet("Test Name",
+				new MegamonCreature("test_mini_sprite.png","test_sprite.png","test_sprite.png",
+						"Test Creature", "This is for testing purposes only.", 14, 60, CreatureType.NORMAL,
+						40,60,30,30,50,55,30,ExperienceRate.MEDIUM_FAST,new CreatureMoveLinker[]{}),
+				100);
+		testPet.setHP((int)(Math.random()*testPet.getMaxHP()));
+		testPet2.setHP((int)(Math.random()*testPet2.getMaxHP()));
+		testPet3.setHP((int)(Math.random()*testPet3.getMaxHP()));
+		testPet4.setHP((int)(1));
+		mainP.getMegamonParty().add(testPet);
+		mainP.getMegamonParty().add(testPet2);
+		mainP.getMegamonParty().add(testPet3);
+		mainP.getMegamonParty().add(testPet4);
+		/*System.out.println(testPet);*/
 		//messagebox = new DialogBox("This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.This is a test message.");
 		//startmenubox = new StartMenuBox(0);
 	}
@@ -112,6 +144,9 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 			Gdx.graphics.set
 			//Potential resizing code.
 		}*/
+		if (partyscreen!=null) {
+			partyscreen.run();
+		} else
 		if (messagebox!=null) {
 			messagebox.run();
 		}
@@ -142,20 +177,27 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		currentLevel.renderer.render();
 		batch.begin();
 		//batch.draw(img, 0, 0);
-		for (Object o : currentLevel.getObjects()) {
-			batch.draw(o.sprite, 
-					(float)GraphicUtils.getRelativePixelPositionFromPlayer(camera, o.position).x, 
-					(float)GraphicUtils.getRelativePixelPositionFromPlayer(camera, o.position).y);
-			o.draw();
+
+		if (partyscreen!=null) {
+			partyscreen.draw(batch);
 		}
-		mainP.draw(batch);
-		if (messagebox!=null) {
-			messagebox.draw(batch);
+		else
+		{
+			for (Object o : currentLevel.getObjects()) {
+				batch.draw(o.sprite, 
+						(float)GraphicUtils.getRelativePixelPositionFromPlayer(camera, o.position).x, 
+						(float)GraphicUtils.getRelativePixelPositionFromPlayer(camera, o.position).y);
+				o.draw();
+			}
+			mainP.draw(batch);
+			if (messagebox!=null) {
+				messagebox.draw(batch);
+			}
+			if (startmenubox!=null) {
+				startmenubox.draw(batch);
+			}
 		}
-		if (startmenubox!=null) {
-			startmenubox.draw(batch);
-		}	
-		GlyphLayout size = font.draw(batch, "Test Text", 0, 32);
+		//GlyphLayout size = font.draw(batch, "Test Text", 0, 32);
 		//font.draw(batch, "Test Text", Megamon.WINDOW_WIDTH-size.width, 128-size.height);
 		batch.end();
 		framesPassed++;

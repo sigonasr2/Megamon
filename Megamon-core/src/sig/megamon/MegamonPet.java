@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+import sig.megamon.creature.CreatureMove;
 import sig.megamon.creature.NonVolatileStatus;
 import sig.megamon.creature.VolatileStatus;
 
@@ -37,6 +38,7 @@ public class MegamonPet {
 	String original_trainer_name;
 	Integer level;
 	Integer hp_iv;
+	List<CreatureMove> moveset = new ArrayList<CreatureMove>();
 	
 	public MegamonPet(String nickname, MegamonCreature creature_type, Integer level) {
 		this(nickname,creature_type,level,Megamon.mainP.trainer_id,Megamon.mainP.name);
@@ -44,13 +46,19 @@ public class MegamonPet {
 	
 	public MegamonPet(String nickname, MegamonCreature creature_type, Integer level,
 			Integer original_trainer, String original_trainer_name) {
-		this(nickname,creature_type,level,original_trainer,original_trainer_name,
+		this(nickname,creature_type,level,original_trainer,original_trainer_name, new ArrayList<CreatureMove>(),
 				new Integer[]{}, new Integer[]{});
 	}
 	
 	public MegamonPet(String nickname, MegamonCreature creature_type, Integer level,
-			Integer original_trainer, String original_trainer_name, Integer[] stats_collection, 
-			Integer...IV_EV_Collection) {
+			Integer original_trainer, String original_trainer_name, List<CreatureMove> moveset) {
+		this(nickname,creature_type,level,original_trainer,original_trainer_name, moveset,
+				new Integer[]{}, new Integer[]{});
+	}
+	
+	public MegamonPet(String nickname, MegamonCreature creature_type, Integer level,
+			Integer original_trainer, String original_trainer_name, List<CreatureMove> moveset, 
+			Integer[] stats_collection, Integer...IV_EV_Collection) {
 		this.creature = creature_type;
 		if (nickname.length()>0) {
 			this.nickname = nickname;
@@ -61,8 +69,13 @@ public class MegamonPet {
 		this.original_trainer = original_trainer;
 		this.original_trainer_name = original_trainer_name;
 		InitializeStats(stats_collection,IV_EV_Collection);
+		LearnDefaultMoves();
 	}
 	
+	private void LearnDefaultMoves() {
+		// TODO Auto-generated method stub
+	}
+
 	private void InitializeStats(Integer[] stats_collection, Integer[] IV_EV_Collection) {
 		/*if (stats_collection.length<6) {
 			//System.out.println("WARNING! Malformed stats array! Will fill in with defaults.");
@@ -119,6 +132,238 @@ public class MegamonPet {
 		return (int)(((((base+iv)*2)+(Math.sqrt(ev)/4))*lv)/100)+5;
 	}
 	
+	public MegamonCreature getCreature() {
+		return creature;
+	}
+	
+	public NonVolatileStatus getStatus() {
+		return status;
+	}
+
+	public VolatileStatus getBattleStatus() {
+		return battlestatus;
+	}
+
+	public Integer getATKModifier() {
+		return atk_modifier;
+	}
+
+	public Integer getDEFModifier() {
+		return def_modifier;
+	}
+
+	public Integer getSPDModifier() {
+		return spd_modifier;
+	}
+
+	public Integer getSPCModifier() {
+		return spc_modifier;
+	}
+
+	public Integer getEVAModifier() {
+		return eva_modifier;
+	}
+
+	public Integer getACCModifier() {
+		return acc_modifier;
+	}
+
+	public Integer getATKIV() {
+		return atk_iv;
+	}
+
+	public Integer getDEFIV() {
+		return def_iv;
+	}
+
+	public Integer getSPDIV() {
+		return spd_iv;
+	}
+
+	public Integer getSPCIV() {
+		return spc_iv;
+	}
+
+	public Integer getATKEV() {
+		return atk_ev;
+	}
+
+	public Integer getDEFEV() {
+		return def_ev;
+	}
+
+	public Integer getSPDEV() {
+		return spd_ev;
+	}
+
+	public Integer getSPCEV() {
+		return spc_ev;
+	}
+
+	public Integer getHPEV() {
+		return hp_ev;
+	}
+
+	public Integer getHP() {
+		return hp;
+	}
+
+	public Integer getMaxHP() {
+		return maxhp;
+	}
+
+	public Integer getATK() {
+		return atk;
+	}
+
+	public Integer getDEF() {
+		return def;
+	}
+
+	public Integer getSPD() {
+		return spd;
+	}
+
+	public Integer getSPC() {
+		return spc;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public Integer getOriginalTrainerID() {
+		return original_trainer;
+	}
+
+	public String getOriginalTrainerName() {
+		return original_trainer_name;
+	}
+
+	public Integer getLevel() {
+		return level;
+	}
+
+	public Integer getHPIV() {
+		return hp_iv;
+	}
+
+	public void setCreature(MegamonCreature creature) {
+		this.creature = creature;
+	}
+
+	public void setStatus(NonVolatileStatus status) {
+		this.status = status;
+	}
+
+	public void setBattleStatus(VolatileStatus battlestatus) {
+		this.battlestatus = battlestatus;
+	}
+
+	public void setATKModifier(Integer atk_modifier) {
+		this.atk_modifier = atk_modifier;
+	}
+
+	public void setDEFModifier(Integer def_modifier) {
+		this.def_modifier = def_modifier;
+	}
+
+	public void setSPDModifier(Integer spd_modifier) {
+		this.spd_modifier = spd_modifier;
+	}
+
+	public void setSPCModifier(Integer spc_modifier) {
+		this.spc_modifier = spc_modifier;
+	}
+
+	public void setEVAModifier(Integer eva_modifier) {
+		this.eva_modifier = eva_modifier;
+	}
+
+	public void setACCModifier(Integer acc_modifier) {
+		this.acc_modifier = acc_modifier;
+	}
+
+	public void setATKIV(Integer atk_iv) {
+		this.atk_iv = atk_iv;
+	}
+
+	public void setDEFIV(Integer def_iv) {
+		this.def_iv = def_iv;
+	}
+
+	public void setSPDIV(Integer spd_iv) {
+		this.spd_iv = spd_iv;
+	}
+
+	public void setSPCIV(Integer spc_iv) {
+		this.spc_iv = spc_iv;
+	}
+
+	public void setATKEV(Integer atk_ev) {
+		this.atk_ev = atk_ev;
+	}
+
+	public void setDEFEV(Integer def_ev) {
+		this.def_ev = def_ev;
+	}
+
+	public void setSPDEV(Integer spd_ev) {
+		this.spd_ev = spd_ev;
+	}
+
+	public void setSPCEV(Integer spc_ev) {
+		this.spc_ev = spc_ev;
+	}
+
+	public void setHPEV(Integer hp_ev) {
+		this.hp_ev = hp_ev;
+	}
+
+	public void setHP(Integer hp) {
+		this.hp = hp;
+	}
+
+	public void setMaxHP(Integer maxhp) {
+		this.maxhp = maxhp;
+	}
+
+	public void setATK(Integer atk) {
+		this.atk = atk;
+	}
+
+	public void setDEF(Integer def) {
+		this.def = def;
+	}
+
+	public void setSPD(Integer spd) {
+		this.spd = spd;
+	}
+
+	public void setSPC(Integer spc) {
+		this.spc = spc;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public void setOriginalTrainerID(Integer original_trainer) {
+		this.original_trainer = original_trainer;
+	}
+
+	public void setOriginalTrainerName(String original_trainer_name) {
+		this.original_trainer_name = original_trainer_name;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
+	}
+
+	public void setHPIV(Integer hp_iv) {
+		this.hp_iv = hp_iv;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder(this.getClass().getSimpleName()+"(");
 		boolean first=true;

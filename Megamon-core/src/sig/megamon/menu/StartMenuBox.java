@@ -12,14 +12,7 @@ public class StartMenuBox {
 	static Texture startmenu_background_top = new Texture("startmenu_box.png");
 	static Texture startmenu_highlight = new Texture("startmenu_highlight.png");
 	int selection=0;
-	String[] menuitems = new String[]
-			{"Megadex",
-			"Megamon",
-			"Bag",
-			"<Trainer>",
-			"Save",
-			"Options",
-			"Exit"};
+	MenuItem[] menuitems = MenuItem.values();
 	int menuitem_spacing = 28;
 	
 	public StartMenuBox(int cursorStartingPosition) {
@@ -35,6 +28,30 @@ public class StartMenuBox {
 		}
 		if (Gdx.input.isKeyJustPressed(Megamon.MENUKEY)) {
 			Megamon.startmenubox=null;
+			return;
+		}
+		if (Gdx.input.isKeyJustPressed(Megamon.ACTIONKEY)) {
+			switch (menuitems[selection]) {
+				case MEGADEX:
+					break;
+				case MEGAMON:
+					Megamon.partyscreen = new MegamonPartyScreen();
+					break;
+				case BAG:
+					break;
+				case TRAINER:
+					break;
+				case OPTIONS:
+					break;
+				case SAVE:
+					break;
+				case EXIT:
+					Megamon.startmenubox = null;
+					break;
+			}
+		}
+		if (Gdx.input.isKeyJustPressed(Megamon.CANCELKEY)) {
+			Megamon.startmenubox=null;
 		}
 	}
 	
@@ -48,11 +65,11 @@ public class StartMenuBox {
 				spacingpixels);
 		batch.draw(startmenu_background_bottom, windowx,menubot-startmenu_background_bottom.getHeight());
 		int i=0;
-		for (String s : menuitems) {
+		for (MenuItem s : menuitems) {
 			if (i==selection) {
 				batch.draw(startmenu_highlight, windowx-4, windowy-((i+1)*menuitem_spacing)+8);
 			}
-			DialogBox.messageboxfont.draw(batch, s, windowx+28, windowy-(i++*menuitem_spacing));
+			DialogBox.messageboxfont.draw(batch, s.getDisplayText(), windowx+28, windowy-(i++*menuitem_spacing));
 		}
 		Megamon.font.draw(batch, ">", windowx+8, windowy-(selection*menuitem_spacing)+8);
 	}

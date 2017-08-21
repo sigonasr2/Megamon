@@ -22,7 +22,7 @@ public class Player {
 	Point2D.Double direction = new Point2D.Double(0,0);
 	Point2D.Double lastdirection = new Point2D.Double(0,1);
 	Texture sprite;
-	List<MegamonPet> megamon_party = new ArrayList<MegamonPet>();
+	private List<MegamonPet> megamon_party = new ArrayList<MegamonPet>();
 	int trainer_id;
 	String name;
 	
@@ -88,5 +88,13 @@ public class Player {
 	
 	public void draw(SpriteBatch batch) {
 		batch.draw(sprite, (int)GraphicUtils.getPlayerPixelPosition(Megamon.camera).getX(), (int)GraphicUtils.getPlayerPixelPosition(Megamon.camera).getY(), (int)GraphicUtils.getTileSize(Megamon.camera).getX(), (int)GraphicUtils.getTileSize(Megamon.camera).getY());
+	}
+	
+	public void addMegamonToParty(MegamonPet megamon) {
+		megamon_party.add(megamon);
+	}
+
+	public List<MegamonPet> getMegamonParty() {
+		return megamon_party;
 	}
 }

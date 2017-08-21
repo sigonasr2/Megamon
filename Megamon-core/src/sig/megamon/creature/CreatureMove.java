@@ -3,18 +3,23 @@ package sig.megamon.creature;
 import java.lang.reflect.Field;
 
 public class CreatureMove {
-	int lvLearned=0;
 	String name="";
 	String desc="";
 	CreatureType type;
 	Category cat;
+	int pp;
+	int accuracy;
+	int power;
 	
-	public CreatureMove(String name, String description, int levelLearned, CreatureType type, Category category) {
+	public CreatureMove(String name, String description, CreatureType type, Category category,
+			int initialPP, int power, int accuracy) {
 		this.name=name;
 		this.desc=description;
-		this.lvLearned=levelLearned;
 		this.type=type;
 		this.cat=category;
+		this.pp=initialPP;
+		this.power = power;
+		this.accuracy = accuracy;
 	}
 	
 	public String toString() {
