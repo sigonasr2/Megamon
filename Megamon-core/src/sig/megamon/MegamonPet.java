@@ -281,18 +281,18 @@ public class MegamonPet {
 	}
 
 	public void setACCModifier(Integer acc_modifier) {
-		this.acc_modifier = acc_modifier;
-	}
-
-	public void setATKIV(Integer atk_iv) {
-		this.atk_iv = atk_iv;
-	}
-
-	public void setDEFIV(Integer def_iv) {
-		this.def_iv = def_iv;
-	}
-
-	public void setSPDIV(Integer spd_iv) {
+		this.acc_modifier = acc_modifier;                                            
+	}                                                                                
+                                                                                     
+	public void setATKIV(Integer atk_iv) {                                           
+		this.atk_iv = atk_iv;                                                        
+	}                                                                                
+                                                                                     
+	public void setDEFIV(Integer def_iv) {                                           
+		this.def_iv = def_iv;                                                        
+	}                                                                                
+                                                                                     
+	public void setSPDIV(Integer spd_iv) {                                           
 		this.spd_iv = spd_iv;
 	}
 

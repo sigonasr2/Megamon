@@ -36,6 +36,7 @@ import sig.megamon.creature.CreatureMoveLinker;
 import sig.megamon.creature.CreatureType;
 import sig.megamon.creature.ExperienceRate;
 import sig.megamon.menu.DialogBox;
+import sig.megamon.menu.MegadexMenu;
 import sig.megamon.menu.MegamonPartyScreen;
 import sig.megamon.menu.StartMenuBox;
 import sig.megamon.ref.Ref;
@@ -52,7 +53,8 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 	public static DialogBox messagebox;
 	public static StartMenuBox startmenubox;
 	public static MegamonPartyScreen partyscreen;
-	public static Texture healthbar;
+	public static MegadexMenu megadexscreen;
+	public static Texture healthbar,healthbar_horizontal;
 	//AssetManager assets;
 	//TiledMap map;
 	static OrthographicCamera camera;
@@ -71,12 +73,14 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 	final public static int MOVEUPKEY = Keys.UP;
 	final public static int MOVEDOWNKEY = Keys.DOWN;
 	final public static int MENUKEY = Keys.ENTER;
+	public final static int CURSORDELAYTIMER = 5;
 	public static List<MegamonCreature> megamonDatabase = new ArrayList<MegamonCreature>();
 	public static HashMap<String,CreatureMove> moveDatabase = new HashMap<String,CreatureMove>();
 	//public static List<Object> objects = new ArrayList<Object>();
 	public static Room currentLevel;
 	public static HashMap<String,RoomRef> doorDatabase = new HashMap<String,RoomRef>();
 	public static HashMap<String,SignRef> infoDatabase = new HashMap<String,SignRef>();
+	//Point2D.Double background_offset = new Point2D.Double(0, 0);
 	
 	@Override
 	public void create() {
@@ -84,6 +88,9 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		font = new BitmapFont(Gdx.files.internal("fonts/AgencyFB.fnt"));
 		mainP = new Player(new Point2D.Double(1,1),"megamon_icon64.png");
 		healthbar = new Texture("interface/healthbar.png");
+		healthbar_horizontal = new Texture("interface/healthbar_horizontal.png");
+		//Gdx.graphics.setUndecorated(false);
+		//Gdx.graphics.setResizable(false);
 		//assets = new AssetManager();
 		
 		/*assets.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
@@ -100,28 +107,26 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		Database.SetupInfoDatabase();
 		Database.SetupMoveDatabase();
 		Database.SetupMegamonDatabase();
+		Database.SetupEvolutionDatabase();
 		currentLevel = new Room(mainP.position,"Test Map");
 		
 		MegamonPet testPet = new MegamonPet("Test Name",
-				new MegamonCreature("test_mini_sprite.png","test_sprite.png","test_sprite.png",
-						"Test Creature", "This is for testing purposes only.", 14, 60, CreatureType.NORMAL,
-						40,60,30,30,50,55,30,ExperienceRate.MEDIUM_FAST,new CreatureMoveLinker[]{}),
+				megamonDatabase.get(2),
 				100);
 		MegamonPet testPet2 = new MegamonPet("Test Name",
-				new MegamonCreature("test_mini_sprite.png","test_sprite.png","test_sprite.png",
-						"Test Creature", "This is for testing purposes only.", 14, 60, CreatureType.NORMAL,
-						40,60,30,30,50,55,30,ExperienceRate.MEDIUM_FAST,new CreatureMoveLinker[]{}),
+				megamonDatabase.get(5),
 				100);
 		MegamonPet testPet3 = new MegamonPet("Test Name",
-				new MegamonCreature("test_mini_sprite.png","test_sprite.png","test_sprite.png",
-						"Test Creature", "This is for testing purposes only.", 14, 60, CreatureType.NORMAL,
-						40,60,30,30,50,55,30,ExperienceRate.MEDIUM_FAST,new CreatureMoveLinker[]{}),
+				megamonDatabase.get(0),
 				100);
 		MegamonPet testPet4 = new MegamonPet("Test Name",
-				new MegamonCreature("test_mini_sprite.png","test_sprite.png","test_sprite.png",
-						"Test Creature", "This is for testing purposes only.", 14, 60, CreatureType.NORMAL,
-						40,60,30,30,50,55,30,ExperienceRate.MEDIUM_FAST,new CreatureMoveLinker[]{}),
+				megamonDatabase.get(3),
 				100);
+		megamonDatabase.get(2).setSeen(true);
+		megamonDatabase.get(2).setCaught(true);
+		megamonDatabase.get(5).setSeen(true);
+		megamonDatabase.get(0).setSeen(true);
+		megamonDatabase.get(102).setSeen(true);
 		testPet.setHP((int)(Math.random()*testPet.getMaxHP()));
 		testPet2.setHP((int)(Math.random()*testPet2.getMaxHP()));
 		testPet3.setHP((int)(Math.random()*testPet3.getMaxHP()));
@@ -144,6 +149,9 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 			Gdx.graphics.set
 			//Potential resizing code.
 		}*/
+		if (megadexscreen!=null) {
+			megadexscreen.run();
+		} else
 		if (partyscreen!=null) {
 			partyscreen.run();
 		} else
@@ -178,6 +186,10 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		batch.begin();
 		//batch.draw(img, 0, 0);
 
+		if (megadexscreen!=null) {
+			megadexscreen.draw(batch);
+		}
+		else
 		if (partyscreen!=null) {
 			partyscreen.draw(batch);
 		}
@@ -199,6 +211,8 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 		}
 		//GlyphLayout size = font.draw(batch, "Test Text", 0, 32);
 		//font.draw(batch, "Test Text", Megamon.WINDOW_WIDTH-size.width, 128-size.height);
+		/*DrawUtils.drawTiledImage(batch, healthbar, background_offset);
+		background_offset.setLocation(background_offset.x+0.4, background_offset.y+0.2);*/
 		batch.end();
 		framesPassed++;
 		if (lastCheck.getTime().getSeconds()!=Calendar.getInstance().getTime().getSeconds()) {
@@ -209,9 +223,14 @@ public class Megamon extends ApplicationAdapter implements ApplicationListener{
 	}
 	
 	@Override
+	public void resize(int width, int height) {
+		//Gdx.graphics.setWindowedMode(width, (int)(width*((float)Megamon.WINDOW_HEIGHT)/Megamon.WINDOW_WIDTH));
+		//System.out.println("Resized: "+width+","+height);
+	}
+	
+	@Override
 	public void dispose () {
 		batch.dispose();
-		img.dispose();
 	}
 	
 	public String toString() {

@@ -29,8 +29,9 @@ public class MegamonCreature {
 	final int base_exp;
 	final ExperienceRate exp_rate;
 	final List<CreatureMoveLinker> moveset;
-	final List<Evolution> evolution_rules;
+	List<Evolution> evolution_rules;
 	boolean seenByPlayer=false;
+	boolean caughtByPlayer=false;
 	
 	public MegamonCreature(String mini_icon, String sprite, String back_sprite,
 			String name, String bio, int size, float weight, CreatureType type1, 
@@ -47,6 +48,14 @@ public class MegamonCreature {
 			List<Evolution> evolution_rules,
 			CreatureMoveLinker...moveset) {
 		this(mini_icon,sprite,back_sprite,name,bio,size, weight,type1,CreatureType.NONE,base_hp,base_atk,base_def,base_spc,base_spd,catch_rate,base_exp,exp_rate,evolution_rules,moveset);
+	}
+	
+	public MegamonCreature(String mini_icon, String sprite, String back_sprite,
+			String name, String bio, int size, float weight, CreatureType type1, 
+			 CreatureType type2, int base_hp, int base_atk, int base_def, int base_spc, int base_spd,
+			int catch_rate, int base_exp, ExperienceRate exp_rate,
+			CreatureMoveLinker...moveset) {
+		this(mini_icon,sprite,back_sprite,name,bio,size, weight,type1,type2,base_hp,base_atk,base_def,base_spc,base_spd,catch_rate,base_exp,exp_rate,new ArrayList<Evolution>(),moveset);
 	}
 
 	public MegamonCreature(String mini_icon, String sprite, String back_sprite,
@@ -75,6 +84,10 @@ public class MegamonCreature {
 	
 	public void setSeen(boolean seenByPlayer) {
 		this.seenByPlayer=seenByPlayer;
+	}
+	
+	public void setCaught(boolean caughtByPlayer) {
+		this.caughtByPlayer=caughtByPlayer;
 	}
 	
 	public SpriteCollection getSprites() {
@@ -136,9 +149,16 @@ public class MegamonCreature {
 	public boolean isSeenByPlayer() {
 		return seenByPlayer;
 	}
+	public boolean isCaughtByPlayer() {
+		return caughtByPlayer;
+	}
 	
 	public List<Evolution> getEvolutionRules() {
 		return evolution_rules;
+	}
+	
+	public void setEvolutionRules(List<Evolution> rules) {
+		this.evolution_rules = rules;
 	}
 
 	public String toString() {

@@ -74,13 +74,13 @@ public class MegamonPartyScreen {
 					WINDOW_MARGIN+((i%3)*MEGAMON_SLOT_SPACING)+4,(int)(Megamon.WINDOW_HEIGHT/(i>2?1.9:1.1)-64));
 			Megamon.font.draw(batch, "Lv", 
 					WINDOW_MARGIN+((i%3)*MEGAMON_SLOT_SPACING),(int)(Megamon.WINDOW_HEIGHT/(i>2?1.9:1.1))-
-					mp.getCreature().getSprites().getMiniIcon().getHeight()*2-40);
+					16*2-40);
 			DialogBox.messageboxfont.draw(batch, Integer.toString(mp.getLevel()), 
 					WINDOW_MARGIN+((i%3)*MEGAMON_SLOT_SPACING),(int)(Megamon.WINDOW_HEIGHT/(i>2?1.9:1.1))-
-					mp.getCreature().getSprites().getMiniIcon().getHeight()*2-72,24,Align.center,false);
+					16*2-72,24,Align.center,false);
 			DialogBox.messageboxfont.draw(batch, mp.getHP()+"/"+mp.getMaxHP(), 
 					WINDOW_MARGIN+((i%3)*MEGAMON_SLOT_SPACING),(int)(Megamon.WINDOW_HEIGHT/(i>2?1.9:1.1))-
-					mp.getCreature().getSprites().getMiniIcon().getHeight()*2-96,24,Align.center,false);
+					16*2-96,24,Align.center,false);
 			if ((float)mp.getHP()/mp.getMaxHP()<0.3) {
 				batch.setColor(Color.RED);
 			}
@@ -92,7 +92,7 @@ public class MegamonPartyScreen {
 			batch.setColor(Color.WHITE);
 			Megamon.font.draw(batch, mp.getNickname(), 
 					WINDOW_MARGIN+((i%3)*MEGAMON_SLOT_SPACING)-24,(int)(Megamon.WINDOW_HEIGHT/(i>2?1.9:1.1)-
-					mp.getCreature().getSprites().getMiniIcon().getHeight()*2-120),0,mp.getNickname().length(),100,Align.center,true,"...");
+					16*2-120),0,mp.getNickname().length(),100,Align.center,true,"...");
 			i++;
 		}
 	}

@@ -10,7 +10,7 @@ public class StartMenuBox {
 	static Texture startmenu_background = new Texture("startmenu_box_middle.png");
 	static Texture startmenu_background_bottom = new Texture("startmenu_box_bottom.png");
 	static Texture startmenu_background_top = new Texture("startmenu_box.png");
-	static Texture startmenu_highlight = new Texture("startmenu_highlight.png");
+	public static Texture startmenu_highlight = new Texture("startmenu_highlight.png");
 	int selection=0;
 	MenuItem[] menuitems = MenuItem.values();
 	int menuitem_spacing = 28;
@@ -33,6 +33,7 @@ public class StartMenuBox {
 		if (Gdx.input.isKeyJustPressed(Megamon.ACTIONKEY)) {
 			switch (menuitems[selection]) {
 				case MEGADEX:
+					Megamon.megadexscreen = new MegadexMenu();
 					break;
 				case MEGAMON:
 					Megamon.partyscreen = new MegamonPartyScreen();
